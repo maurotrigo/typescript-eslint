@@ -290,3 +290,36 @@ export function getEqualsKind(operator: string): EqualsKind | undefined {
       return undefined;
   }
 }
+
+/**
+ * @returns true if the type is `any`
+ */
+export function isAnyType(node: ts.Node, checker: ts.TypeChecker): boolean {
+  const type = checker.getTypeAtLocation(node);
+  return isTypeFlagSet(type, ts.TypeFlags.Any);
+}
+
+/**
+ * @returns true if the type is `any[]` or `readonly any[]`
+ */
+export function isAnyArrayType(
+  node: ts.Node,
+  checker: ts.TypeChecker,
+): boolean {
+  const type = checker.getTypeAtLocation(node);
+  return (
+    checker.isArrayType(type) &&
+    isTypeReference(type) &&
+    isTypeFlagSet(checker.getTypeArguments(type)[0], ts.TypeFlags.Any)
+  );
+}
+
+/**
+ * @returns true if the type is `any`, `any[]` or `readonly any[]`
+ */
+export function isAnyOrAnyArrayType(
+  node: ts.Node,
+  checker: ts.TypeChecker,
+): boolean {
+  return isAnyType(node, checker) || isAnyArrayType(node, checker);
+}

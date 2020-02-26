@@ -132,15 +132,38 @@ function isAwaitKeyword(
   return node?.type === AST_TOKEN_TYPES.Identifier && node.value === 'await';
 }
 
+/**
+ * Checks if a node is the null literal
+ */
+function isNullLiteral(
+  node: TSESTree.Node | undefined | null,
+): node is TSESTree.NullLiteral {
+  if (!node) {
+    return false;
+  }
+  return node.type === AST_NODE_TYPES.Literal && node.value === null;
+}
+
+function isMemberOrOptionalMemberExpression(
+  node: TSESTree.Node,
+): node is TSESTree.MemberExpression | TSESTree.OptionalMemberExpression {
+  return (
+    node.type === AST_NODE_TYPES.MemberExpression ||
+    node.type === AST_NODE_TYPES.OptionalMemberExpression
+  );
+}
+
 export {
   isAwaitExpression,
   isAwaitKeyword,
   isConstructor,
   isIdentifier,
   isLogicalOrOperator,
+  isMemberOrOptionalMemberExpression,
   isNonNullAssertionPunctuator,
   isNotNonNullAssertionPunctuator,
   isNotOptionalChainPunctuator,
+  isNullLiteral,
   isOptionalChainPunctuator,
   isOptionalOptionalChain,
   isSetter,
