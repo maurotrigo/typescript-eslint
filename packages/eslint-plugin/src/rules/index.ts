@@ -52,6 +52,7 @@ import noUnnecessaryCondition from './no-unnecessary-condition';
 import noUnnecessaryQualifier from './no-unnecessary-qualifier';
 import noUnnecessaryTypeAssertion from './no-unnecessary-type-assertion';
 import noUnsafeMemberAccess from './no-unsafe-member-access';
+import noUnsafeReturn from './no-unsafe-return';
 import noUntypedPublicSignature from './no-untyped-public-signature';
 import noUnusedExpressions from './no-unused-expressions';
 import noUnusedVars from './no-unused-vars';
@@ -143,6 +144,7 @@ export default {
   'no-unnecessary-type-arguments': useDefaultTypeParameter,
   'no-unnecessary-type-assertion': noUnnecessaryTypeAssertion,
   'no-unsafe-member-access': noUnsafeMemberAccess,
+  'no-unsafe-return': noUnsafeReturn,
   'no-untyped-public-signature': noUntypedPublicSignature,
   'no-unused-expressions': noUnusedExpressions,
   'no-unused-vars-experimental': noUnusedVarsExperimental,

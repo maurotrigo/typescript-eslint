@@ -294,9 +294,30 @@ export function getEqualsKind(operator: string): EqualsKind | undefined {
 /**
  * @returns true if the type is `any`
  */
+export function isTypeAnyType(type: ts.Type): boolean {
+  return isTypeFlagSet(type, ts.TypeFlags.Any);
+}
+
+/**
+ * @returns true if the type is `any`
+ */
 export function isAnyType(node: ts.Node, checker: ts.TypeChecker): boolean {
   const type = checker.getTypeAtLocation(node);
-  return isTypeFlagSet(type, ts.TypeFlags.Any);
+  return isTypeAnyType(type);
+}
+
+/**
+ * @returns true if the type is `any[]` or `readonly any[]`
+ */
+export function isTypeAnyArrayType(
+  type: ts.Type,
+  checker: ts.TypeChecker,
+): boolean {
+  return (
+    checker.isArrayType(type) &&
+    isTypeReference(type) &&
+    isTypeFlagSet(checker.getTypeArguments(type)[0], ts.TypeFlags.Any)
+  );
 }
 
 /**
@@ -307,11 +328,7 @@ export function isAnyArrayType(
   checker: ts.TypeChecker,
 ): boolean {
   const type = checker.getTypeAtLocation(node);
-  return (
-    checker.isArrayType(type) &&
-    isTypeReference(type) &&
-    isTypeFlagSet(checker.getTypeArguments(type)[0], ts.TypeFlags.Any)
-  );
+  return isTypeAnyArrayType(type, checker);
 }
 
 /**
@@ -322,4 +339,27 @@ export function isAnyOrAnyArrayType(
   checker: ts.TypeChecker,
 ): boolean {
   return isAnyType(node, checker) || isAnyArrayType(node, checker);
+}
+
+export const enum AnyType {
+  Any,
+  AnyArray,
+  Safe,
+}
+/**
+ * @returns `AnyType.Any` if the type is `any`, `AnyType.AnyArray` if the type is `any[]` or `readonly any[]`,
+ *          otherwise it returns `AnyType.Safe`.
+ */
+export function isAnyOrAnyArrayTypeDiscriminated(
+  node: ts.Node,
+  checker: ts.TypeChecker,
+): AnyType {
+  const type = checker.getTypeAtLocation(node);
+  if (isTypeAnyType(type)) {
+    return AnyType.Any;
+  }
+  if (isTypeAnyArrayType(type, checker)) {
+    return AnyType.AnyArray;
+  }
+  return AnyType.Safe;
 }
